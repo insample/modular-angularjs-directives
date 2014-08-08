@@ -1,16 +1,16 @@
 /*
- * An abstract directive is a service providing a constructor for an object whose keys are a subset
+ * An extensible directive is a service providing a constructor for an object whose keys are a subset
  * of the keys found in a Directive Definition Object.
  */
-angular.module("insample.extensible_directives").factory("ExtensibleDirectiveCtor", function() {
+angular.module("insample.extensible_directives", []).factory("ExtensibleDirectiveCtor", function() {
 
-  var abstractDirectiveCtor = function() {}
+  var extensibleDirectiveCtor = function() {}
   /*
-   * The keys defined on this object will be inhertied by all abstract directives. Each such key
+   * The keys defined on this object will be inhertied by all extensible directives. Each such key
    * should be a key in a Directive Definition Object, cf.
    * http://docs.angularjs.org/api/ng/service/$compile
    */
-  abstractDirectiveCtor.prototype = {
+  extensibleDirectiveCtor.prototype = {
     scope: {},
     controller: function($scope) {},
     compile: function(tElement, tAttrs) {
@@ -19,22 +19,22 @@ angular.module("insample.extensible_directives").factory("ExtensibleDirectiveCto
   }
 
   /*
-   * Returns a constructor for an abstract directive that's extended with the keys in
+   * Returns a constructor for an extensible directive that's extended with the keys in
    * partialDirective as follows:
    *
-   * If partialDirective has a function valued key (e.g. controller), the new abstract directive
-   * will have that value defined to be a function that first calls the caller abstract directive's
+   * If partialDirective has a function valued key (e.g. controller), the new extensible directive
+   * will have that value defined to be a function that first calls the caller extensible directive's
    * function (if defined) and then the function in partialDirective.
    *
-   * If partialDirective has an object valued key (e.g. scope), the new abstract directive will have
-   * that value defined to be the extension of the caller abstract directive's object (if defined)
+   * If partialDirective has an object valued key (e.g. scope), the new extensible directive will have
+   * that value defined to be the extension of the caller extensible directive's object (if defined)
    * with the one in partialDirective.
    *
-   * Otherwise the value in the new abstract directive will be overwritten to be the value in
+   * Otherwise the value in the new extensible directive will be overwritten to be the value in
    * partialDirective for the given key.
    */
-  abstractDirectiveCtor.extendWith = function(partialDirective) {
-    var abstractDirectivePrototype = new this();
+  extensibleDirectiveCtor.extendWith = function(partialDirective) {
+    var extensibleDirectivePrototype = new this();
     var extendedCtor = function() {
 
       if (_.has(partialDirective, "link")) {
@@ -43,7 +43,7 @@ angular.module("insample.extensible_directives").factory("ExtensibleDirectiveCto
       }
 
       _.each(partialDirective, function(value, key) {
-        var baseValue = abstractDirectivePrototype[key]
+        var baseValue = extensibleDirectivePrototype[key]
         if (_.isFunction(value)) {
           /*
            * When creating compound controllers, we need to annotate the new function with
@@ -105,7 +105,7 @@ angular.module("insample.extensible_directives").factory("ExtensibleDirectiveCto
         }
       }, this)
     }
-    extendedCtor.prototype = abstractDirectivePrototype
+    extendedCtor.prototype = extensibleDirectivePrototype
     extendedCtor.extendWith = this.extendWith
     extendedCtor.scopeKeysAdded = partialDirective.scope ? _.keys(partialDirective.scope) : []
     return extendedCtor
@@ -123,5 +123,5 @@ angular.module("insample.extensible_directives").factory("ExtensibleDirectiveCto
     })
   }
 
-  return abstractDirectiveCtor
+  return extensibleDirectiveCtor
 })
