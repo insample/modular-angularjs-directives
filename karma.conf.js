@@ -22,7 +22,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'http://code.angularjs.org/1.2.21/angular.min.js',
+      'vendor/*.js',
       'src/*.js',
       'test/unit/*.coffee'
     ],
