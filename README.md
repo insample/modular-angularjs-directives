@@ -1,5 +1,5 @@
 requires:
-karma + jasmine, coffee preprocessor for tests
+karma + jasmine, coffee preprocessor for tests, angular mocks
 angular, underscore  - includes 1.2.21 and 1.6.0, resp
 
 
@@ -16,7 +16,7 @@ common class for bar chart and histogram, then individual.
 
 
 restrictions:
-no link function, return from compile instead
+no link function or pre-link function, return post-link from compile instead
 all isolate scope
 
 how it works:

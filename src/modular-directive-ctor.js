@@ -20,11 +20,12 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
   var modularDirectiveCtor = function() {}
 
   modularDirectiveCtor.prototype = {
-    // Only support isolate scope.
+    // Modular directives ONLY support isolate scope.
     scope: {},
     controller: function($scope) {},
-    // Module directives do NOT support link functions attached to a `link` key; instead, use
-    // compile functions to return link functions.
+    // Modular directives do NOT support link functions attached to a `link` key; instead, use
+    // compile functions to return link functions. Pre-link functions are currently also NOT
+    // supported.
     compile: function(tElement, tAttrs) {
       return angular.noop
     }
@@ -32,29 +33,29 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
 
   /*
    * Returns a constructor for an modular directive that's extended with the keys in
-   * partialDirective as follows:
+   * partialDdo as follows:
    *
-   * If partialDirective has a function valued key (e.g. controller), the new modular directive
+   * If partialDdo has a function valued key (e.g. controller), the new modular directive
    * will have that value defined to be a function that first calls the caller modular directive's
-   * function (if defined) and then the function in partialDirective.
+   * function (if defined) and then the function in partialDdo.
    *
-   * If partialDirective has an object valued key (e.g. scope), the new modular directive will have
+   * If partialDdo has an object valued key (e.g. scope), the new modular directive will have
    * that value defined to be the extension of the caller modular directive's object (if defined)
-   * with the one in partialDirective.
+   * with the one in partialDdo.
    *
    * Otherwise the value in the new modular directive will be overwritten to be the value in
-   * partialDirective for the given key.
+   * partialDdo for the given key.
    */
-  modularDirectiveCtor.extendWith = function(partialDirective) {
+  modularDirectiveCtor.extendWith = function(partialDdo) {
     var modularDirectivePrototype = new this();
     var extendedCtor = function() {
 
-      if (_.has(partialDirective, "link")) {
+      if (_.has(partialDdo, "link")) {
         throw new Error("Standalone link functions are not supported; please use a compile " +
           "function that returns a link function instead.")
       }
 
-      _.each(partialDirective, function(value, key) {
+      _.each(partialDdo, function(value, key) {
         var baseValue = modularDirectivePrototype[key]
         if (_.isFunction(value)) {
           /*
@@ -122,7 +123,7 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
 
     extendedCtor.extendWith = this.extendWith
 
-    extendedCtor.wasExtendedWith = partialDirective
+    extendedCtor.wasExtendedWith = partialDdo
 
     return extendedCtor
   }
