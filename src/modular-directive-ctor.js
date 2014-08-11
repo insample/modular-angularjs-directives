@@ -9,11 +9,10 @@
  *
  ************************************
  *
- * A modular directive is a constructor for an AngularJS Directive Definition Object (DDO), cf.
- * http://docs.angularjs.org/api/ng/service/$compile
+ * A modular directive constructor is an extensible constructor for an AngularJS Directive
+ * Definition Object (DDO), cf. http://docs.angularjs.org/api/ng/service/$compile
  *
- * A modular directive can be extended using its `extendWith` method, described below, which returns
- * another modular directive.
+ * A modular directive constructor can be extended using its `extendWith` method, described below.
  */
 angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor", function() {
 
@@ -32,21 +31,30 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
     }
   }
 
+  /* This method takes `partialDdo`, which must be a valid Directive Definition Object (DDO), and
+   * returns a modular directive constructor. Let “base DDO” be the DDO that would have been
+   * returned by the un-extended input constructor, and let “output DDO” be the DDO that is returned
+   * by the output returned by this function. Then the output DDO is an extension of the base DDO in
+   * the following sense:
 
-  /* UPDATE!!!
-   * Returns a constructor for an modular directive that's extended with the keys in
-   * partialDdo as follows:
+   * 1. The output DDO has an isolate scope object that equals the isolate scope object attached to
+   * the base DDO, if any, extended by the isolate scope object attached to `partialDdo`.
    *
-   * If partialDdo has a function valued key (e.g. controller), the new modular directive
-   * will have that value defined to be a function that first calls the caller modular directive's
-   * function (if defined) and then the function in partialDdo.
+   * 2. The output DDO’s controller function is a concatenation of the base DDO and `partialDdo`
+   * controller functions; the former is called before the latter. The same is true of the output
+   * DDO’s link function, though link functions should be returned by compile functions (see
+   * Restrictions below).
    *
-   * If partialDdo has an object valued key (e.g. scope), the new modular directive will have
-   * that value defined to be the extension of the caller modular directive's object (if defined)
-   * with the one in partialDdo.
+   * 3. For all other DDO properties, the value in `partialDdo` is written over the value in the
+   * base DDO.
    *
-   * Otherwise the value in the new modular directive will be overwritten to be the value in
-   * partialDdo for the given key.
+   * Restrictions:
+   *
+   * 1. The output DDO will always have an isolate scope.
+   *
+   * 2. Standalone link functions are not supported: `partialDdo` may not have a `link` property.
+   * Use compile functions to return link functions. Pre-link functions are not supported, so
+   * compile functions should return functions, not objects containing pre- and post-link functions.
    */
   modularDirectiveCtor.extendWith = function(partialDdo) {
 
@@ -92,14 +100,13 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
 
             break
 
+          /*
+           * When concatenating controllers, we need to annotate the concatenated controller with
+           * dependencies for angular injection to work. Inside the concatenated controller, we must
+           * be careful about which arguments we pass to which constituent controller.
+           */
           case "controller":
 
-            /*
-             * When creating concatenated controllers, we need to annotate the concatenated
-             * controller with dependencies for angular injection to work. Inside the concatenated
-             * controller, we must be careful about which arguments we pass to which constituent
-             * controller.
-             */
             var inj = angular.injector()
             var baseValueAnnotations = _.isUndefined(baseValue) ? [] : inj.annotate(baseValue)
             var valueAnnotations = inj.annotate(value)
