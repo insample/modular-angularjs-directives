@@ -12,13 +12,14 @@
  * A modular directive is a constructor for an AngularJS Directive Definition Object (DDO), cf.
  * http://docs.angularjs.org/api/ng/service/$compile
  *
- * A module directive can be extended using its `extendWith` method, described below, which returns
- * another constructor for a DDO.
+ * A modular directive can be extended using its `extendWith` method, described below, which returns
+ * another modular directive.
  */
 angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor", function() {
 
   var modularDirectiveCtor = function() {}
 
+  // Use this prototype to set DDO defaults.
   modularDirectiveCtor.prototype = {
     // Modular directives ONLY support isolate scope.
     scope: {},
@@ -46,86 +47,106 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
    * Otherwise the value in the new modular directive will be overwritten to be the value in
    * partialDdo for the given key.
    */
-  modularDirectiveCtor.extendWith = function(partialDdo) {
-    var modularDirectivePrototype = new this();
-    var extendedCtor = function() {
+  // modularDirectiveCtor.extendWith = function(partialDdo) {
+  //   var modularDirectivePrototype = new this();
+  //   var extendedCtor = function() {
 
-      if (_.has(partialDdo, "link")) {
-        throw new Error("Standalone link functions are not supported; please use a compile " +
-          "function that returns a link function instead.")
+  //     if (_.has(partialDdo, "link")) {
+  //       throw new Error("Standalone link functions are not supported; please use a compile " +
+  //         "function that returns a link function instead.")
+  //     }
+
+  //     _.each(partialDdo, function(value, key) {
+  //       var baseValue = modularDirectivePrototype[key]
+  //       if (_.isFunction(value)) {
+  //         /*
+  //          * When creating compound controllers, we need to annotate the new function with
+  //          * dependencies for angular injection to work, and also be careful about which arguments
+  //          * we pass to which constituent function.
+  //          */
+  //         if (key == "controller") {
+
+  //           var inj = angular.injector()
+  //           var baseValueAnnotations = _.isUndefined(baseValue) ? [] : inj.annotate(baseValue)
+  //           var valueAnnotations = inj.annotate(value)
+  //           var compoundAnnotations = _.union(baseValueAnnotations, valueAnnotations)
+
+  //           var compoundFct = function() {
+  //             if (!_.isUndefined(baseValue)) {
+  //               baseValue.apply(null,
+  //                 extractServices(baseValueAnnotations, compoundAnnotations, arguments))
+  //             }
+  //             value.apply(null,
+  //               extractServices(valueAnnotations, compoundAnnotations, arguments));
+  //           }
+
+  //           compoundFct.$inject = compoundAnnotations
+  //           this[key] = compoundFct
+
+  //         } else if (key == "compile") {
+
+  //           this[key] = function() {
+  //             var baseLink = undefined
+  //             if (!_.isUndefined(baseValue)) {
+  //               baseLink = baseValue.apply(null, arguments)
+  //             }
+  //             var link = value.apply(null, arguments)
+  //             return function() {
+  //               if (!_.isUndefined(baseLink)) {
+  //                 baseLink.apply(null, arguments)
+  //               }
+  //               link.apply(null, arguments)
+  //             }
+  //           }
+
+
+  //         } else {
+
+  //           this[key] = function() {
+  //             if (!_.isUndefined(baseValue)) {
+  //               baseValue.apply(null, arguments)
+  //             }
+  //             value.apply(null, arguments);
+  //           }
+
+  //         }
+
+  //       } else if (_.isObject(value) && !_.isArray(value)) {
+  //         this[key] = _.clone(baseValue || {})
+  //         _.extend(this[key], value)
+  //       } else {
+  //         this[key] = value;
+  //       }
+  //     }, this)
+  //   }
+
+  //   extendedCtor.prototype = modularDirectivePrototype
+
+  //   extendedCtor.extendWith = this.extendWith
+
+  //   extendedCtor.wasExtendedWith = partialDdo
+
+  //   return extendedCtor
+  // }
+
+
+  /*
+   * Returns a function that calls `baseFct` and then `extensionFct` in sequence. If
+   * `argumentTransformFct` is provided, it is used to transform the arguments array before passing
+   * it to these functions.
+   */
+  var createSerialFunction = function(baseFct, extensionFct, argumentsTransformFct) {
+
+    argumentsTransformFct = argumentsTransformFct || _.identity
+
+    return function() {
+      var transformedArgs = argumentsTransformFct(arguments)
+      if (!_.isUndefined(baseValue)) {
+        baseValue.apply(null, transformedArgs)
       }
-
-      _.each(partialDdo, function(value, key) {
-        var baseValue = modularDirectivePrototype[key]
-        if (_.isFunction(value)) {
-          /*
-           * When creating compound controllers, we need to annotate the new function with
-           * dependencies for angular injection to work, and also be careful about which arguments
-           * we pass to which constituent function.
-           */
-          if (key == "controller") {
-
-            var inj = angular.injector()
-            var baseValueAnnotations = _.isUndefined(baseValue) ? [] : inj.annotate(baseValue)
-            var valueAnnotations = inj.annotate(value)
-            var compoundAnnotations = _.union(baseValueAnnotations, valueAnnotations)
-
-            var compoundFct = function() {
-              if (!_.isUndefined(baseValue)) {
-                baseValue.apply(null,
-                  extractServices(baseValueAnnotations, compoundAnnotations, arguments))
-              }
-              value.apply(null,
-                extractServices(valueAnnotations, compoundAnnotations, arguments));
-            }
-
-            compoundFct.$inject = compoundAnnotations
-            this[key] = compoundFct
-
-          } else if (key == "compile") {
-
-            this[key] = function() {
-              var baseLink = undefined
-              if (!_.isUndefined(baseValue)) {
-                baseLink = baseValue.apply(null, arguments)
-              }
-              var link = value.apply(null, arguments)
-              return function() {
-                if (!_.isUndefined(baseLink)) {
-                  baseLink.apply(null, arguments)
-                }
-                link.apply(null, arguments)
-              }
-            }
-
-
-          } else {
-
-            this[key] = function() {
-              if (!_.isUndefined(baseValue)) {
-                baseValue.apply(null, arguments)
-              }
-              value.apply(null, arguments);
-            }
-
-          }
-
-        } else if (_.isObject(value) && !_.isArray(value)) {
-          this[key] = _.clone(baseValue || {})
-          _.extend(this[key], value)
-        } else {
-          this[key] = value;
-        }
-      }, this)
+      value.apply(null, transformedArgs)
     }
 
-    extendedCtor.prototype = modularDirectivePrototype
-
-    extendedCtor.extendWith = this.extendWith
-
-    extendedCtor.wasExtendedWith = partialDdo
-
-    return extendedCtor
   }
 
   /*
