@@ -1,7 +1,7 @@
 # DDO: Directive Definition Object, cf.
 # http://docs.angularjs.org/api/ng/service/$compile
 
-describe "The modular directive constructor service", ->
+describe "The modular directive constructor", ->
 
   ModularDirectiveCtor = null
 
@@ -44,9 +44,9 @@ describe "The modular directive constructor service", ->
 
   describe "has an extendWith function that", ->
 
-    partialDdo = null
     extendedModularDirectiveCtor = null
     linkCalls = controllerCalls = null
+    partialDdo = secondPartialDdo = null
 
     beforeEach ->
 
@@ -57,8 +57,10 @@ describe "The modular directive constructor service", ->
         scope:     key1: 1
         compile:   () -> (str) -> linkCalls.push "base: " + str
         controller:(serviceName1) ->
-          arguments.whichController = "base"
-          controllerCalls.push arguments
+          controllerCalls.push {
+            arguments: arguments,
+            whichController: "base"
+          }
         template:  "firstTemplate"
 
       extendedModularDirectiveCtor = ModularDirectiveCtor.extendWith partialDdo
@@ -76,9 +78,10 @@ describe "The modular directive constructor service", ->
 
     describe "when passed a partial DDO with an isolate scope object", ->
 
-      it "extends the base isolate scope object", ->
-
+      beforeEach ->
         secondPartialDdo = scope: key2: 2
+
+      it "extends the base isolate scope object", ->
 
         twiceExtendedCtor = extendedModularDirectiveCtor.extendWith secondPartialDdo
         twiceExtendedModularDdo = new twiceExtendedCtor
@@ -88,9 +91,10 @@ describe "The modular directive constructor service", ->
 
     describe "when passed a partial DDO with a link function", ->
 
-      it "throws because this is not supported", ->
-
+      beforeEach ->
         secondPartialDdo = link: () ->
+
+      it "throws because this is not supported", ->
 
         willThrow = () ->
           twiceExtendedCtor = extendedModularDirectiveCtor.extendWith secondPartialDdo
@@ -100,10 +104,11 @@ describe "The modular directive constructor service", ->
 
     describe "when passed a partial DDO with a compile function", ->
 
-      it "concatenates the link functions, with the base function called first", ->
-
+      beforeEach ->
         secondPartialDdo =
           compile: () -> (str) -> linkCalls.push "extension: " + str
+
+      it "concatenates the link functions, with the base function called first", ->
 
         twiceExtendedCtor = extendedModularDirectiveCtor.extendWith secondPartialDdo
         twiceExtendedModularDdo = new twiceExtendedCtor
@@ -116,25 +121,34 @@ describe "The modular directive constructor service", ->
 
     describe "when passed a partial DDO with a controller function", ->
 
-      it "concatenates the link controllers, with the base controller called first", ->
+      fakeScope = service1 = service2 = null
+      twiceExtendedModularDdo = null
+
+      beforeEach ->
+
+        fakeScope = {name: "$scope"}
+        service1 = {name: "serviceName1"}
+        service2 = {name: "serviceName2"}
 
         secondPartialDdo =
-          controller: () ->
-            arguments.whichController = "extension"
-            controllerCalls.push arguments
+          controller: (serviceName2) ->
+            controllerCalls.push {
+              arguments: arguments,
+              whichController: "extension"
+            }
 
         twiceExtendedCtor = extendedModularDirectiveCtor.extendWith secondPartialDdo
         twiceExtendedModularDdo = new twiceExtendedCtor
 
-        concatenatedControllerFct = twiceExtendedModularDdo.controller "foo"
+      it "concatenates the controllers, with the base controller called first", ->
+
+        twiceExtendedModularDdo.controller fakeScope, service1, service2
 
         expect(controllerCalls[0].whichController).toEqual "base"
         expect(controllerCalls[1].whichController).toEqual "extension"
 
 
       it "annotates concatenated controllers with all dependencies", ->
-
-        secondPartialDdo = controller: (serviceName2) ->
 
         twiceExtendedCtor = extendedModularDirectiveCtor.extendWith secondPartialDdo
         twiceExtendedModularDdo = new twiceExtendedCtor
@@ -145,27 +159,18 @@ describe "The modular directive constructor service", ->
 
       it "calls constituent controllers only with the dependencies they asked for", ->
 
-        secondPartialDdo =
-          controller: (serviceName2) ->
-            arguments.whichController = "extension"
-            controllerCalls.push arguments
-        service1 = {name: "serviceName1"}
-        service2 = {name: "serviceName2"}
-        service3 = {name: "serviceName3"}
+        twiceExtendedModularDdo.controller fakeScope, service1, service2
 
-        twiceExtendedCtor = extendedModularDirectiveCtor.extendWith secondPartialDdo
-        twiceExtendedModularDdo = new twiceExtendedCtor
-        twiceExtendedModularDdo.controller(fakeScope, service1, service2)
-
-        expect(controllerCalls[0]).toEqual {0: service1}
-        expect(controllerCalls[1]).toEqual {0: service2}
+        expect(controllerCalls[0].arguments).toEqual {0: service1}
+        expect(controllerCalls[1].arguments).toEqual {0: service2}
 
 
     describe "when passed a partial DDO with some other DDO field", ->
 
-      it "overwrites the field in the extended DDO", ->
-
+      beforeEach ->
         secondPartialDdo = template: "secondTemplate"
+
+      it "overwrites the field in the extended DDO", ->
 
         twiceExtendedCtor = extendedModularDirectiveCtor.extendWith secondPartialDdo
         twiceExtendedModularDdo = new twiceExtendedCtor

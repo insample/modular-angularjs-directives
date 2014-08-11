@@ -32,7 +32,8 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
     }
   }
 
-  /*
+
+  /* UPDATE!!!
    * Returns a constructor for an modular directive that's extended with the keys in
    * partialDdo as follows:
    *
@@ -47,107 +48,113 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
    * Otherwise the value in the new modular directive will be overwritten to be the value in
    * partialDdo for the given key.
    */
-  // modularDirectiveCtor.extendWith = function(partialDdo) {
-  //   var modularDirectivePrototype = new this();
-  //   var extendedCtor = function() {
+  modularDirectiveCtor.extendWith = function(partialDdo) {
 
-  //     if (_.has(partialDdo, "link")) {
-  //       throw new Error("Standalone link functions are not supported; please use a compile " +
-  //         "function that returns a link function instead.")
-  //     }
+    if (_.has(partialDdo, "link")) {
+      throw new Error("Standalone link functions are not supported; please use a compile " +
+        "function that returns a link function instead.")
+    }
 
-  //     _.each(partialDdo, function(value, key) {
-  //       var baseValue = modularDirectivePrototype[key]
-  //       if (_.isFunction(value)) {
-  //         /*
-  //          * When creating compound controllers, we need to annotate the new function with
-  //          * dependencies for angular injection to work, and also be careful about which arguments
-  //          * we pass to which constituent function.
-  //          */
-  //         if (key == "controller") {
+    var modularDirectivePrototype = new this()
 
-  //           var inj = angular.injector()
-  //           var baseValueAnnotations = _.isUndefined(baseValue) ? [] : inj.annotate(baseValue)
-  //           var valueAnnotations = inj.annotate(value)
-  //           var compoundAnnotations = _.union(baseValueAnnotations, valueAnnotations)
+    var extendedCtor = function() {
 
-  //           var compoundFct = function() {
-  //             if (!_.isUndefined(baseValue)) {
-  //               baseValue.apply(null,
-  //                 extractServices(baseValueAnnotations, compoundAnnotations, arguments))
-  //             }
-  //             value.apply(null,
-  //               extractServices(valueAnnotations, compoundAnnotations, arguments));
-  //           }
+      _.each(partialDdo, function(value, key) {
 
-  //           compoundFct.$inject = compoundAnnotations
-  //           this[key] = compoundFct
+        var baseValue = modularDirectivePrototype[key]
 
-  //         } else if (key == "compile") {
+        switch (key) {
 
-  //           this[key] = function() {
-  //             var baseLink = undefined
-  //             if (!_.isUndefined(baseValue)) {
-  //               baseLink = baseValue.apply(null, arguments)
-  //             }
-  //             var link = value.apply(null, arguments)
-  //             return function() {
-  //               if (!_.isUndefined(baseLink)) {
-  //                 baseLink.apply(null, arguments)
-  //               }
-  //               link.apply(null, arguments)
-  //             }
-  //           }
+          case "link":
+            // Not supported
+            break
+
+          case "scope":
+
+            this[key] = _.clone(baseValue || {})
+            _.extend(this[key], value)
+
+            break
+
+          case "compile":
+
+            this[key] = function() {
+
+              var baseLink = undefined
+              if (!_.isUndefined(baseValue)) {
+                baseLink = baseValue.apply(null, arguments)
+              }
+              var link = value.apply(null, arguments)
+
+              return concatenateFunctions(baseLink, link)
+
+            }
+
+            break
+
+          case "controller":
+
+            /*
+             * When creating concatenated controllers, we need to annotate the concatenated
+             * controller with dependencies for angular injection to work. Inside the concatenated
+             * controller, we must be careful about which arguments we pass to which constituent
+             * controller.
+             */
+            var inj = angular.injector()
+            var baseValueAnnotations = _.isUndefined(baseValue) ? [] : inj.annotate(baseValue)
+            var valueAnnotations = inj.annotate(value)
+            var allAnnotations = _.union(baseValueAnnotations, valueAnnotations)
+
+            var concatenatedController = concatenateFunctions(
+              function() {
+                baseValue.apply(null,
+                  extractServices(baseValueAnnotations, allAnnotations, arguments))
+              }, function() {
+                value.apply(null,
+                  extractServices(valueAnnotations, allAnnotations, arguments))
+              }
+            )
+
+            concatenatedController.$inject = allAnnotations
+            this[key] = concatenatedController
+
+            break
+
+          default:
+
+            this[key] = value
+
+            break
+
+        }
+
+      }, this)
+
+    }
+
+    extendedCtor.prototype = modularDirectivePrototype
+
+    extendedCtor.extendWith = this.extendWith
+
+    extendedCtor.wasExtendedWith = partialDdo
+
+    return extendedCtor
+
+  }
 
 
-  //         } else {
-
-  //           this[key] = function() {
-  //             if (!_.isUndefined(baseValue)) {
-  //               baseValue.apply(null, arguments)
-  //             }
-  //             value.apply(null, arguments);
-  //           }
-
-  //         }
-
-  //       } else if (_.isObject(value) && !_.isArray(value)) {
-  //         this[key] = _.clone(baseValue || {})
-  //         _.extend(this[key], value)
-  //       } else {
-  //         this[key] = value;
-  //       }
-  //     }, this)
-  //   }
-
-  //   extendedCtor.prototype = modularDirectivePrototype
-
-  //   extendedCtor.extendWith = this.extendWith
-
-  //   extendedCtor.wasExtendedWith = partialDdo
-
-  //   return extendedCtor
-  // }
-
-
-  /*
-   * Returns a function that calls `baseFct` and then `extensionFct` in sequence. If
-   * `argumentTransformFct` is provided, it is used to transform the arguments array before passing
-   * it to these functions.
-   */
-  var concatenateFunctions = function(baseFct, extensionFct, argumentsTransformFct) {
-
-    argumentsTransformFct = argumentsTransformFct || _.identity
+  /* Returns a function that calls `baseFct` and then `extensionFct` in sequence. */
+  var concatenateFunctions = function(baseFct, extensionFct) {
 
     return function() {
-      var transformedArgs = argumentsTransformFct(arguments)
-      if (!_.isUndefined(baseValue)) {
-        baseValue.apply(null, transformedArgs)
+      if (!_.isUndefined(baseFct)) {
+        baseFct.apply(null, arguments)
       }
-      value.apply(null, transformedArgs)
+      extensionFct.apply(null, arguments)
     }
 
   }
+
 
   /*
    * This function gets the index in `serviceNameList` of every service name in `serviceNameSublist`
@@ -158,8 +165,9 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
    */
   var extractServices = function(serviceNameSublist, serviceNameList, serviceList) {
 
-    if (serviceNameList.length != serviceList.length) {
-      throw new Error("The number of provided services does not equal the number of service names.")
+    if (serviceNameList.length > serviceList.length) {
+      throw new Error(
+        "The number of provided services is less than the number of requested services.")
     }
 
     return _.map(serviceNameSublist, function(serviceName) {
@@ -171,5 +179,7 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
     })
   }
 
+
   return modularDirectiveCtor
+
 })
