@@ -1,7 +1,7 @@
 requires:
 karma + jasmine, coffee preprocessor for tests, angular mocks
 angular, underscore  - includes 1.2.21 and 1.6.0, resp
-
+use bower to get dependencies
 
 use case: complex directives where services are not DRY, and using require is not enough
 because you need modular link functions too.

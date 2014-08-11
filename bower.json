@@ -1,0 +1,27 @@
+{
+  "name": "modular-directives",
+  "version": "1.0.0",
+  "authors": [
+    "Igor Ferst <igor.ferst@gmail.com>"
+  ],
+  "description": "A modular way to build AngularJS directives.",
+  "main": "src/modular-directive.js",
+  "keywords": [
+    "angular",
+    "angularjs",
+    "directive"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-mocks": "~1.2.21",
+    "underscore": "~1.6.0",
+    "angular": "~1.2.21"
+  }
+}

@@ -22,7 +22,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'vendor/*.js',
+      'bower_components/angular/angular.min.js',
+      'bower_components/angular-mocks/angular-mocks.js',
+      'bower_components/underscre/underscore.js',
       'src/*.js',
       'test/unit/*.coffee'
     ],
