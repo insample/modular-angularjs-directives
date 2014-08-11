@@ -1,18 +1,30 @@
 /*
- * An modular directive is a service providing a constructor for an object whose keys are a subset
- * of the keys found in a Directive Definition Object.
+ ************************************
+ *
+ * Modular Directives
+ *
+ * Copyright (c) 2014 InSample, Inc.
+ *
+ * Released under the MIT License
+ *
+ ************************************
+ *
+ * A modular directive is a constructor for an AngularJS Directive Definition Object (DDO), cf.
+ * http://docs.angularjs.org/api/ng/service/$compile
+ *
+ * A module directive can be extended using its `extendWith` method, described below, which returns
+ * another constructor for a DDO.
  */
-angular.module("insample.modular_directives", []).factory("modularDirectiveCtor", function() {
+angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor", function() {
 
   var modularDirectiveCtor = function() {}
-  /*
-   * The keys defined on this object will be inhertied by all modular directives. Each such key
-   * should be a key in a Directive Definition Object, cf.
-   * http://docs.angularjs.org/api/ng/service/$compile
-   */
+
   modularDirectiveCtor.prototype = {
+    // Only support isolate scope.
     scope: {},
     controller: function($scope) {},
+    // Module directives do NOT support link functions attached to a `link` key; instead, use
+    // compile functions to return link functions.
     compile: function(tElement, tAttrs) {
       return angular.noop
     }
@@ -60,10 +72,10 @@ angular.module("insample.modular_directives", []).factory("modularDirectiveCtor"
             var compoundFct = function() {
               if (!_.isUndefined(baseValue)) {
                 baseValue.apply(null,
-                  extractBasedOnIndex(baseValueAnnotations, compoundAnnotations, arguments))
+                  extractServices(baseValueAnnotations, compoundAnnotations, arguments))
               }
               value.apply(null,
-                extractBasedOnIndex(valueAnnotations, compoundAnnotations, arguments));
+                extractServices(valueAnnotations, compoundAnnotations, arguments));
             }
 
             compoundFct.$inject = compoundAnnotations
@@ -105,21 +117,35 @@ angular.module("insample.modular_directives", []).factory("modularDirectiveCtor"
         }
       }, this)
     }
+
     extendedCtor.prototype = modularDirectivePrototype
+
     extendedCtor.extendWith = this.extendWith
-    extendedCtor.scopeKeysAdded = partialDirective.scope ? _.keys(partialDirective.scope) : []
+
+    extendedCtor.wasExtendedWith = partialDirective
+
     return extendedCtor
   }
 
   /*
-   * The array arr1 should be a subset of arr2; the length of arr2 should equal that of targetArr.
+   * This function gets the index in `serviceNameList` of every service name in `serviceNameSublist`
+   * and returns the sublist of `serviceList` that corresponds to these indices.
    *
-   * This function gets the indices in arr2 that correspond to elements of arr1, and extracts the
-   * elements of targetArr that correspond to those indices.
+   * Every name in `serviceNameSublist` should appear in `serviceNameList`; `serviceNameList` should
+   * be exactly equal to the list of names of services in `serviceList`.
    */
-  var extractBasedOnIndex = function(arr1, arr2, targetArr) {
-    return _.map(arr1, function(elt) {
-      return targetArr[_.indexOf(arr2, elt)]
+  var extractServices = function(serviceNameSublist, serviceNameList, serviceList) {
+
+    if (serviceNameList.length != serviceList.length) {
+      throw new Error("The number of provided services does not equal the number of service names.")
+    }
+
+    return _.map(serviceNameSublist, function(serviceName) {
+      var indexInServiceList = _.indexOf(serviceNameList, serviceName)
+      if (indexInServiceList < 0) {
+        throw new Error(serviceName + " was not found in the list of service names.")
+      }
+      return serviceList[indexInServiceList]
     })
   }
 
