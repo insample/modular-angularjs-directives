@@ -135,7 +135,7 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
    * `argumentTransformFct` is provided, it is used to transform the arguments array before passing
    * it to these functions.
    */
-  var createSerialFunction = function(baseFct, extensionFct, argumentsTransformFct) {
+  var concatenateFunctions = function(baseFct, extensionFct, argumentsTransformFct) {
 
     argumentsTransformFct = argumentsTransformFct || _.identity
 
