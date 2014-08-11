@@ -27,6 +27,7 @@ module.exports = function(config) {
       'bower_components/underscore/underscore.js',
       'src/*.js',
       'test/*.coffee',
+      'demo/js/*.js',
       'demo/test/*.coffee'
     ],
 
