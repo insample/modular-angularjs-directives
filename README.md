@@ -1,7 +1,4 @@
-requires:
-karma + jasmine, coffee preprocessor for tests, angular mocks
-angular, underscore  - includes 1.2.21 and 1.6.0, resp
-use bower to get dependencies
+
 
 use case: complex directives where services are not DRY, and using require is not enough
 because you need modular link functions too.
@@ -21,3 +18,23 @@ all isolate scope
 
 how it works:
 extend with extendWith, then finally instantiate - result is a DDO
+
+
+Requirements:
+
+  Bower
+  Karma with Jasmine and Coffeescript preprocessor
+
+Dependencies:
+
+  AngularJS (1.2.21) and Underscore.js (1.6.0)
+  Karma and angular-mocks for testing
+
+
+
+
+
+Set up:
+  install requirments
+  call bower inside directory
+  run karma for tests
