@@ -1,16 +1,16 @@
 /*
- * An extensible directive is a service providing a constructor for an object whose keys are a subset
+ * An modular directive is a service providing a constructor for an object whose keys are a subset
  * of the keys found in a Directive Definition Object.
  */
-angular.module("insample.extensible_directives", []).factory("ExtensibleDirectiveCtor", function() {
+angular.module("insample.modular_directives", []).factory("modularDirectiveCtor", function() {
 
-  var extensibleDirectiveCtor = function() {}
+  var modularDirectiveCtor = function() {}
   /*
-   * The keys defined on this object will be inhertied by all extensible directives. Each such key
+   * The keys defined on this object will be inhertied by all modular directives. Each such key
    * should be a key in a Directive Definition Object, cf.
    * http://docs.angularjs.org/api/ng/service/$compile
    */
-  extensibleDirectiveCtor.prototype = {
+  modularDirectiveCtor.prototype = {
     scope: {},
     controller: function($scope) {},
     compile: function(tElement, tAttrs) {
@@ -19,22 +19,22 @@ angular.module("insample.extensible_directives", []).factory("ExtensibleDirectiv
   }
 
   /*
-   * Returns a constructor for an extensible directive that's extended with the keys in
+   * Returns a constructor for an modular directive that's extended with the keys in
    * partialDirective as follows:
    *
-   * If partialDirective has a function valued key (e.g. controller), the new extensible directive
-   * will have that value defined to be a function that first calls the caller extensible directive's
+   * If partialDirective has a function valued key (e.g. controller), the new modular directive
+   * will have that value defined to be a function that first calls the caller modular directive's
    * function (if defined) and then the function in partialDirective.
    *
-   * If partialDirective has an object valued key (e.g. scope), the new extensible directive will have
-   * that value defined to be the extension of the caller extensible directive's object (if defined)
+   * If partialDirective has an object valued key (e.g. scope), the new modular directive will have
+   * that value defined to be the extension of the caller modular directive's object (if defined)
    * with the one in partialDirective.
    *
-   * Otherwise the value in the new extensible directive will be overwritten to be the value in
+   * Otherwise the value in the new modular directive will be overwritten to be the value in
    * partialDirective for the given key.
    */
-  extensibleDirectiveCtor.extendWith = function(partialDirective) {
-    var extensibleDirectivePrototype = new this();
+  modularDirectiveCtor.extendWith = function(partialDirective) {
+    var modularDirectivePrototype = new this();
     var extendedCtor = function() {
 
       if (_.has(partialDirective, "link")) {
@@ -43,7 +43,7 @@ angular.module("insample.extensible_directives", []).factory("ExtensibleDirectiv
       }
 
       _.each(partialDirective, function(value, key) {
-        var baseValue = extensibleDirectivePrototype[key]
+        var baseValue = modularDirectivePrototype[key]
         if (_.isFunction(value)) {
           /*
            * When creating compound controllers, we need to annotate the new function with
@@ -105,7 +105,7 @@ angular.module("insample.extensible_directives", []).factory("ExtensibleDirectiv
         }
       }, this)
     }
-    extendedCtor.prototype = extensibleDirectivePrototype
+    extendedCtor.prototype = modularDirectivePrototype
     extendedCtor.extendWith = this.extendWith
     extendedCtor.scopeKeysAdded = partialDirective.scope ? _.keys(partialDirective.scope) : []
     return extendedCtor
@@ -123,5 +123,5 @@ angular.module("insample.extensible_directives", []).factory("ExtensibleDirectiv
     })
   }
 
-  return extensibleDirectiveCtor
+  return modularDirectiveCtor
 })
