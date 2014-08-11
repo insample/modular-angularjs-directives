@@ -26,14 +26,15 @@ module.exports = function(config) {
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/underscore/underscore.js',
       'src/*.js',
-      'test/unit/*.coffee'
+      'test/*.coffee',
+      'demo/test/*.coffee'
     ],
 
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/unit/*.coffee' : 'coffee'
+      'test/*.coffee' : 'coffee'
     },
 
 
