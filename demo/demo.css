@@ -1,0 +1,24 @@
+body {
+  font-family: Arial;
+  padding-right: 5px;
+}
+
+input {
+  margin: 5px 0;
+  width: 120px;
+}
+
+.data-box {
+  display: inline-block;
+  margin: 5px 0;
+  padding: 10px;
+  min-width: 100px;
+}
+
+.blue {
+  background: lightblue;
+}
+
+.green {
+  background: lightgreen;
+}

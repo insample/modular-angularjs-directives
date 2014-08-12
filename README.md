@@ -5,7 +5,8 @@ because you need modular link functions too.
 write directives in modular way without necessarily creating lots of directives as
 require mechanism would require.
 
-
+code is just as modular and testable as when you use services, but more succinct and naturally
+hierarchical.
 
 our use case: chart hierarchy
 base chart service that contained boilerplate, then data service that handled async code, then charts -
