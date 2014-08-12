@@ -10,10 +10,10 @@ If you have directives that share a lot of code, the standard Angular way of DRY
 Modular directives are an alternative paradigm that allows you to define directives incrementally and hierarchically by allowing one modular directive to extend another. This results in directive code that is more modular, readable, testable, and allows you to write directives in a naturally
 hierarchical way.
 
+Modular directives are not globally superior to helper services, but in the right situation they can help a lot.
+
 
 ### Example use case
-
-Modular directives are not globally superior to helper services, but in the right situation they can help a lot.
 
 At InSample, we wrote our own visualization library, which included several charts. Charts share a lot of functionality related to asynchronously fetching data, responsive resizing, rendering titles and axes, etc. The size and complexity of this shared code was high, and using helper services resulted in an excess of boilerplate inside our directives. Using modular directives allowed us to organize shared chart code into a hierarchy, making our directives much leaner without compromising readability or testability.
 
