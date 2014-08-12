@@ -11,7 +11,7 @@ angular.module("insample.modular_directives.demo")
 
 // First extension to the base modular directive constructor adds code for fetching data from a fake
 // data service.
-.factory("ModularDirective_GetData", function(ModularDirectiveCtor) {
+.factory("ModularDataFetcher", function(ModularDirectiveCtor) {
 
   return ModularDirectiveCtor.extendWith({
 
@@ -29,9 +29,9 @@ angular.module("insample.modular_directives.demo")
 
 // Second extension adds more controller code to transform received data, a link function that
 // modifies the directive element, and additional Directive Definition Object (DDO) keys.
-.factory("AbstractDemoWidget", function(ModularDirective_GetData) {
+.factory("AbstractDemoWidget", function(ModularDataFetcher) {
 
-  return ModularDirective_GetData.extendWith({
+  return ModularDataFetcher.extendWith({
 
     controller: function($scope, $filter) {
 
