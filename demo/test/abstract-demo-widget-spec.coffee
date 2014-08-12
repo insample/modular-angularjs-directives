@@ -1,10 +1,10 @@
 # Sample spec for the AbstractDemoWidget service defined in js/services.js
 #
-# This file demonstrates how modular directive constructors are tested. Given a modular directive
-# constructor that is an extension of another (in this case AbstractDemoWidget extends
-# ModularDataFetcher), we inject a fake base constructor and define a basic directive implementing
-# the extended constructor. This allows us to write succinct tests that test the extended directive
-# in isolation.
+# This file demonstrates how modular directive services are tested. Given a modular directive
+# service that is an extension of another (in this case AbstractDemoWidget extends
+# ModularDataFetcher), we inject a fake base service and define a basic directive implementing
+# the extended service. This allows us to write succinct tests that test the functionality
+# encapsulated by the extended directive in isolation.
 #
 describe "The AbstractDemoWidget service", ->
 

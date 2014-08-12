@@ -33,6 +33,7 @@ angular.module("insample.modular_directives.demo")
 
   return ModularDataFetcher.extendWith({
 
+    // This controller will run after the controller from the base modular directive.
     controller: function($scope, $filter) {
 
       $scope.$watch("data", function(newData) {
@@ -63,6 +64,7 @@ angular.module("insample.modular_directives.demo")
 
   return AbstractDemoWidget.extendWith({
 
+    // This link function will run after the link function from the base modular directive.
     compile: function() {
 
       return function(scope, element, attrs) {
