@@ -1,8 +1,8 @@
 /*
- * A simple example of how to use modular directives. This file defines a three-level hierarchy of
- * modular directive constructors. Each level in the hierarchy extends the previous one with
- * additional functionality. The constructors at the final level are later used to create directives
- * (see directives.js).
+ * A simple example of how to use modular directives. This file defines a hierarchy of modular
+ * directive constructors. Each level in the hierarchy extends the previous one with additional
+ * functionality. The constructors at the final level are later used to create directives (see
+ * directives.js).
  *
  * To see how modular directives are tested, see the accompanying test files.
  */
@@ -27,10 +27,9 @@ angular.module("insample.modular_directives.demo")
 
 })
 
-// Second extension injects and extends the first with controller code to transform data already
-// received, adds a link function that modifies the directive element, and adds additional Directive
-// Definition Object (DDO) keys.
-.factory("ModularDirective_TransformData", function(ModularDirective_GetData) {
+// Second extension adds more controller code to transform received data, a link function that
+// modifies the directive element, and additional Directive Definition Object (DDO) keys.
+.factory("AbstractDemoWidget", function(ModularDirective_GetData) {
 
   return ModularDirective_GetData.extendWith({
 
@@ -60,9 +59,9 @@ angular.module("insample.modular_directives.demo")
 
 // The third extension adds a little more to the link function and yields a constructor for the
 // final DDO.
-.factory("DemoWidgetBlueCtor", function(ModularDirective_TransformData) {
+.factory("DemoWidgetBlueCtor", function(AbstractDemoWidget) {
 
-  return ModularDirective_TransformData.extendWith({
+  return AbstractDemoWidget.extendWith({
 
     compile: function() {
 
@@ -77,9 +76,9 @@ angular.module("insample.modular_directives.demo")
 })
 
 // A different DDO constructor that also extends the previous modular directive constructor.
-.factory("DemoWidgetGreenCtor", function(ModularDirective_TransformData) {
+.factory("DemoWidgetGreenCtor", function(AbstractDemoWidget) {
 
-  return ModularDirective_TransformData.extendWith({
+  return AbstractDemoWidget.extendWith({
 
     compile: function() {
 
