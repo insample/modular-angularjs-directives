@@ -6,28 +6,11 @@
  *
  * To see how modular directives are tested, see the accompanying test files.
  */
+
 angular.module("insample.modular_directives.demo")
 
-.factory("FakeDataService", function() {
-
-  var data = ""
-
-  return {
-
-    setData: function(newData) {
-      data = newData
-    },
-
-    getData: function() {
-      return data
-    }
-
-  }
-
-})
-
-// First extension to the base modular directive constructor is responsible for fetching data from a
-// fake data service.
+// First extension to the base modular directive constructor adds code for fetching data from a fake
+// data service.
 .factory("ModularDirective_GetData", function(ModularDirectiveCtor) {
 
   return ModularDirectiveCtor.extendWith({
@@ -45,7 +28,8 @@ angular.module("insample.modular_directives.demo")
 })
 
 // Second extension injects and extends the first with controller code to transform data already
-// received, and also adds a link function that modifies the directive element.
+// received, adds a link function that modifies the directive element, and adds additional Directive
+// Definition Object (DDO) keys.
 .factory("ModularDirective_TransformData", function(ModularDirective_GetData) {
 
   return ModularDirective_GetData.extendWith({
@@ -75,7 +59,7 @@ angular.module("insample.modular_directives.demo")
 })
 
 // The third extension adds a little more to the link function and yields a constructor for the
-// final Directive Definition Object (DDO).
+// final DDO.
 .factory("DemoWidgetBlueCtor", function(ModularDirective_TransformData) {
 
   return ModularDirective_TransformData.extendWith({
