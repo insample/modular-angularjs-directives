@@ -5,24 +5,23 @@ Modular directives let you write AngularJS directives in an incremental, modular
 
 ## Why/when are they useful?
 
-If you have directives that share a lot of code, the standard Angular way of DRYing up your code is encapsulating shared code into a service. This can cause an excess of helper services and associated boilerplate in your directives, resulting in less readable, bloated directives.
+If you have directives that share a lot of code, the standard Angular way of DRYing up your code is encapsulating shared code into a service. However, this can cause an excess of helper services and associated boilerplate in your directives, resulting in less readable, bloated directives.
 
-Modular directives are an alternative paradigm that allows you to define directives incrementally and hierarchically by allowing one modular directive to extend another. This results in directive code that is more modular, readable, testable, and allows you to write directives in a naturally
-hierarchical way.
+Modular directives are an alternative paradigm in which directives are defined incrementally by having one modular directive to extend another. This results in directive code that is more modular and readable, and allows you to write directives in a naturally hierarchical way.
 
-Modular directives are not globally superior to helper services, but in the right situation they can help a lot.
+Modular directives are not globally superior to helper services, but in the right situation they can significantly improve code quality.
 
 
 ### Example use case
 
-At InSample, we wrote our own visualization library, which included several charts. Charts share a lot of functionality related to asynchronously fetching data, responsive resizing, rendering titles and axes, etc. The size and complexity of this shared code was high, and using helper services resulted in an excess of boilerplate inside our directives. Using modular directives allowed us to organize shared chart code into a hierarchy, making our directives much leaner without compromising readability or testability.
+At InSample, we wrote our own chart library. Charts share a lot of functionality related to asynchronously fetching data, responsive resizing, rendering titles and axes, etc. The size and complexity of this shared code was high, and using helper services resulted in an excess of boilerplate inside our directives. Using modular directives allowed us to organize shared chart code into a hierarchy, making our directives much leaner without compromising testability.
 
 For example, the part of the chart hierarchy that includes the histogram and bar chart looks like this:
 
-1. A base modular directive that contains chart rendering boilerplate;
+1. A base modular directive that contains plot rendering boilerplate;
 2. an extension that adds code to asynchronously fetch data;
 3. an extension that encapsulates common data preprocessing logic;
-4. branching from that, the histogram and bar chart directives.
+4. branching from that, the histogram and bar chart directives, each with their own rendering logic.
 
 
 ## How do they work?
@@ -31,8 +30,7 @@ In AngularJS, a directive is defined with a [Directive Definition Object](https:
 
 Extending a modular directive means that controller and link functions are called in sequence, and isolate scope object are extended (in the object sense). For details, see the comments in `src/modular-directive-ctor.js`.
 
-This extensibility makes it possible to create "directive hierarchies". Once a modular directive
-has been sufficiently extended, generating a directive is trivial: simply instantiate a DDO and use it to declare a new directive.
+This extensibility makes it possible to create "directive hierarchies". Once a modular directive has been sufficiently extended, generating a directive is trivial: simply instantiate a DDO and use it to declare a new directive.
 
 
 ## How do you use and test them?
