@@ -14,7 +14,7 @@ Modular directives are not globally superior to helper services, but in the righ
 
 ### Example use case
 
-At InSample, we wrote our own chart library. Charts share a lot of functionality related to asynchronously fetching data, responsive resizing, rendering titles and axes, etc. The size and complexity of this shared code was high, and using helper services resulted in an excess of boilerplate inside our directives. Using modular directives allowed us to organize shared chart code into a hierarchy, making our directives much leaner without compromising testability.
+At InSample, we wrote our own chart library. Charts share a lot of functionality related to asynchronously fetching data, responsive resizing, rendering titles and axes, etc. The size and complexity of this shared code was high, and using helper services resulted in an excess of boilerplate inside our directives. Using modular directives allowed us to organize shared chart code into a hierarchy, making our directives leaner and easier to test.
 
 For example, the part of the chart hierarchy that includes the histogram and bar chart looks like this:
 
@@ -22,6 +22,8 @@ For example, the part of the chart hierarchy that includes the histogram and bar
 2. an extension that adds code to asynchronously fetch data;
 3. an extension that encapsulates common data preprocessing logic;
 4. branching from that, the histogram and bar chart directives, each with their own rendering logic.
+
+Each level of this hierarchy is oblivious to the implementation of, and the services referenced by, the previous level.
 
 
 ## How do they work?
@@ -40,7 +42,7 @@ See the demo `demo/demo.html`. The file `demo/js/services.js` defines a simple m
 
 ## Caveats
 
-A modular directive must have an isolate scope.
+A modular directive *must* have an isolate scope.
 
 Modular directives do not support pre-link functions. Link functions must be returned by compile
 functions; standalone link functions defined on the `link` key are not supported.
