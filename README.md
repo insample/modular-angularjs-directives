@@ -50,14 +50,12 @@ First, run `npm install` inside the project root directory, then run the tests w
 ./node_modules/karma/bin/karma start
 ```
 
-Tests are written in [Coffeescript](http://coffeescript.org/). 
+Tests are written in [Coffeescript](http://coffeescript.org/).
 
 
 ## Can I see a demo?
 
-First, run `bower install` inside the project root directory to fetch all dependencies.
-
-Once you do that, see the demo `demo/demo.html`. The file `demo/js/services.js` defines a simple modular directive hierarchy. The file `demo/test/abstract-demo-widget-spec.coffee` demonstrates how to test a modular directive (using Jasmine + Coffeescript). Both are extensively commented.
+See the demo `demo/demo.html`. The file `demo/js/services.js` defines a simple modular directive hierarchy. The file `demo/test/abstract-demo-widget-spec.coffee` demonstrates how to test a modular directive (using Jasmine + Coffeescript). Both are extensively commented.
 
 
 ## Caveats
