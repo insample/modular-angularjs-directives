@@ -5,7 +5,7 @@
     "Igor Ferst <igor.ferst@gmail.com>"
   ],
   "description": "A modular way to build AngularJS directives.",
-  "main": "modular-directive-ctor.js",
+  "main": "modular-directives.js",
   "keywords": [
     "angular",
     "angularjs",

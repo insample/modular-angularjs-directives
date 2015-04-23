@@ -30,18 +30,25 @@ Each level of this hierarchy is oblivious to the implementation of, and the serv
 
 In AngularJS, a directive is defined with a [Directive Definition Object](https://docs.angularjs.org/api/ng/service/$compile) (DDO), which is a plain javascript object whose values configure the directive. A modular directive is a constructor function that instantiate a DDO and is extensible.
 
-Extending a modular directive means that controller and link functions are called in sequence, and isolate scope object are extended (in the object sense). For details, see the comments in `src/modular-directive-ctor.js`.
+Extending a modular directive means that controller and link functions are called in sequence, and isolate scope object are extended (in the object sense). For details, see the comments in `modular-directives.js`.
 
 This extensibility makes it possible to create "directive hierarchies". Once a modular directive has been sufficiently extended, generating a directive is trivial: simply instantiate a DDO and use it to declare a new directive.
 
 
-## Installation
+## Can I see a demo?
 
-Using [Bower](http://www.bower.io):
+See the demo `demo/demo.html`. The file `demo/js/services.js` defines a simple modular directive hierarchy. The file `demo/test/abstract-demo-widget-spec.coffee` demonstrates how to test a modular directive (using Jasmine + Coffeescript). Both are extensively commented.
+
+
+## How do I install and use it?
+
+Install using [Bower](http://www.bower.io):
 
 ```
 bower install modular-directives
 ```
+Then use in your Angular app by including the module `insample.modular_directives`.
+
 
 ## How do I run the tests?
 
@@ -51,11 +58,6 @@ First, run `npm install` inside the project root directory, then run the tests w
 ```
 
 Tests are written in [Coffeescript](http://coffeescript.org/).
-
-
-## Can I see a demo?
-
-See the demo `demo/demo.html`. The file `demo/js/services.js` defines a simple modular directive hierarchy. The file `demo/test/abstract-demo-widget-spec.coffee` demonstrates how to test a modular directive (using Jasmine + Coffeescript). Both are extensively commented.
 
 
 ## Caveats
