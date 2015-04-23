@@ -1,6 +1,6 @@
 {
   "name": "modular-directives",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A modular way to build AngularJS directives.",
   "repository": {
     "type": "git",
