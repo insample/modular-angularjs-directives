@@ -35,9 +35,29 @@ Extending a modular directive means that controller and link functions are calle
 This extensibility makes it possible to create "directive hierarchies". Once a modular directive has been sufficiently extended, generating a directive is trivial: simply instantiate a DDO and use it to declare a new directive.
 
 
-## How do you use and test them?
+## Installation
 
-See the demo `demo/demo.html`. The file `demo/js/services.js` defines a simple modular directive hierarchy. The file `demo/test/abstract-demo-widget-spec.coffee` demonstrates how to test a modular directive. Both are extensively commented.
+Using [Bower](http://www.bower.io):
+
+```
+bower install modular-directives
+```
+
+## How do I run the tests?
+
+First, run `npm install` inside the project root directory, then run the tests with
+```
+./node_modules/karma/bin/karma start
+```
+
+Tests are written in [Coffeescript](http://coffeescript.org/). 
+
+
+## Can I see a demo?
+
+First, run `bower install` inside the project root directory to fetch all dependencies.
+
+Once you do that, see the demo `demo/demo.html`. The file `demo/js/services.js` defines a simple modular directive hierarchy. The file `demo/test/abstract-demo-widget-spec.coffee` demonstrates how to test a modular directive (using Jasmine + Coffeescript). Both are extensively commented.
 
 
 ## Caveats
@@ -46,26 +66,3 @@ A modular directive *must* have an isolate scope.
 
 Modular directives do not support pre-link functions. Link functions must be returned by compile
 functions; standalone link functions defined on the `link` key are not supported.
-
-## Dependencies
-
-Dependencies are **not** managed directly (see below), but for reference they are:
-
-1. [AngularJS 1.2.21](http://angularjs.org/)
-2. [Underscore.js 1.6.0](http://underscorejs.org/)
-3. [Jasmine 2.0](http://jasmine.github.io/)
-
-All tests are written in [Coffeescript](http://coffeescript.org/).
-
-## Installation
-
-### Requirements
-
-1. [Bower](http://www.bower.io) for dependency management.
-2. [Karma](http://karma-runner.github.io/), with Jasmine plugin and Coffeescript preprocessor, for running tests.
-
-### Set up
-
-1. Install Bower and Karma (with `karma-jasmine` and `karma-coffee-preprocessor`).
-2. Call `bower install` inside the project root directory to fetch dependencies.
-3. Start Karma inside the project root directory: `karma start karma.conf.js`

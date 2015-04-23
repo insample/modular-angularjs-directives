@@ -161,8 +161,11 @@ describe "The modular directive constructor", ->
 
         twiceExtendedModularDdo.controller fakeScope, service1, service2
 
-        expect(controllerCalls[0].arguments).toEqual {0: service1}
-        expect(controllerCalls[1].arguments).toEqual {0: service2}
+        expect(controllerCalls[0].arguments[0]).toEqual service1
+        expect(controllerCalls[0].arguments.length).toEqual 1
+
+        expect(controllerCalls[1].arguments[0]).toEqual service2
+        expect(controllerCalls[1].arguments.length).toEqual 1
 
 
     describe "when passed a partial DDO with some other DDO field", ->

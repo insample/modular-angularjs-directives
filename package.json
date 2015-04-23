@@ -1,0 +1,24 @@
+{
+  "name": "modular-directives",
+  "version": "1.0.0",
+  "description": "A modular way to build AngularJS directives.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/insample/modular-angularjs-directives.git"
+  },
+  "keywords": [
+    "angular",
+    "angularjs",
+    "directive"
+  ],
+  "author": "Igor Ferst <igor.ferst@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/insample/modular-angularjs-directives",
+  "devDependencies": {
+    "jasmine-core": "^2.2.0",
+    "karma": "^0.12.31",
+    "karma-chrome-launcher": "^0.1.8",
+    "karma-coffee-preprocessor": "^0.2.1",
+    "karma-jasmine": "^0.3.5"
+  }
+}

@@ -5,7 +5,7 @@
     "Igor Ferst <igor.ferst@gmail.com>"
   ],
   "description": "A modular way to build AngularJS directives.",
-  "main": "src/modular-directive-ctor.js",
+  "main": "modular-directive-ctor.js",
   "keywords": [
     "angular",
     "angularjs",
@@ -13,11 +13,8 @@
   ],
   "license": "MIT",
   "ignore": [
-    "**/.*",
-    "node_modules",
     "bower_components",
-    "test",
-    "tests"
+    "node_modules"
   ],
   "dependencies": {
     "angular-mocks": "~1.2.21",
