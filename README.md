@@ -5,9 +5,9 @@ Modular directives let you write AngularJS directives in an incremental, modular
 
 ## Why/when are they useful?
 
-If you have directives that share a lot of code, the standard Angular way of DRYing up your code is encapsulating shared code into a service. However, this can cause an excess of helper services and associated boilerplate in your directives, resulting in less readable, bloated directives.
+If you have directives that share a lot of code, the standard Angular way of DRYing up your code is encapsulating shared code into a service. However, this can cause an excess of helper services and associated boilerplate in your directives, resulting in less readable, bloated directives. An alterative is applying multiple directives and using Angular's priority feature to make sure they are applied in the correct order.
 
-Modular directives are an alternative paradigm in which directives are defined incrementally by having one modular directive to extend another. This results in directive code that is more modular and readable, and allows you to write directives in a naturally hierarchical way.
+Modular directives are an alternative paradigm in which directives are defined incrementally by having one modular directive inherit behavior from another. This results in directive code that is more modular and readable, and allows you to write directives in a naturally hierarchical way. Best of all, unlike the multiple directive paradigm, all behavior is captured in a single directive and there's no need to worry about priorities for multiple directives.
 
 Modular directives are not globally superior to helper services, but in the right situation they can significantly improve code quality.
 

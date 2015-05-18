@@ -16,7 +16,7 @@
  */
 angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor", function() {
 
-  var modularDirectiveCtor = function() {}
+  var modularDirectiveCtor = function() {};
 
   // Use this prototype to set DDO defaults.
   modularDirectiveCtor.prototype = {
@@ -29,7 +29,7 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
     compile: function(tElement, tAttrs) {
       return angular.noop
     }
-  }
+  };
 
   /* This method takes `partialDdo`, which must be a valid Directive Definition Object (DDO), and
    * returns a modular directive constructor. Let “base DDO” be the DDO that would have been
@@ -63,42 +63,42 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
         "function that returns a link function instead.")
     }
 
-    var modularDirectivePrototype = new this()
+    var modularDirectivePrototype = new this();
 
     var extendedCtor = function() {
 
       _.each(partialDdo, function(value, key) {
 
-        var baseValue = modularDirectivePrototype[key]
+        var baseValue = modularDirectivePrototype[key];
 
         switch (key) {
 
           case "link":
             // Not supported
-            break
+            break;
 
           case "scope":
 
-            this[key] = _.clone(baseValue || {})
-            _.extend(this[key], value)
+            this[key] = _.clone(baseValue || {});
+            _.extend(this[key], value);
 
-            break
+            break;
 
           case "compile":
 
             this[key] = function() {
 
-              var baseLink = undefined
+              var baseLink = undefined;
               if (!_.isUndefined(baseValue)) {
                 baseLink = baseValue.apply(null, arguments)
               }
-              var link = value.apply(null, arguments)
+              var link = value.apply(null, arguments);
 
               return concatenateFunctions(baseLink, link)
 
-            }
+            };
 
-            break
+            break;
 
           /*
            * When concatenating controllers, we need to annotate the concatenated controller with
@@ -107,10 +107,10 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
            */
           case "controller":
 
-            var inj = angular.injector()
-            var baseValueAnnotations = _.isUndefined(baseValue) ? [] : inj.annotate(baseValue)
-            var valueAnnotations = inj.annotate(value)
-            var allAnnotations = _.union(baseValueAnnotations, valueAnnotations)
+            var inj = angular.injector();
+            var baseValueAnnotations = _.isUndefined(baseValue) ? [] : inj.annotate(baseValue);
+            var valueAnnotations = inj.annotate(value);
+            var allAnnotations = _.union(baseValueAnnotations, valueAnnotations);
 
             var concatenatedController = concatenateFunctions(
               function() {
@@ -120,16 +120,16 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
                 value.apply(null,
                   extractServices(valueAnnotations, allAnnotations, arguments))
               }
-            )
+            );
 
-            concatenatedController.$inject = allAnnotations
-            this[key] = concatenatedController
+            concatenatedController.$inject = allAnnotations;
+            this[key] = concatenatedController;
 
-            break
+            break;
 
           default:
 
-            this[key] = value
+            this[key] = value;
 
             break
 
@@ -137,17 +137,17 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
 
       }, this)
 
-    }
+    };
 
-    extendedCtor.prototype = modularDirectivePrototype
+    extendedCtor.prototype = modularDirectivePrototype;
 
-    extendedCtor.extendWith = this.extendWith
+    extendedCtor.extendWith = this.extendWith;
 
-    extendedCtor.wasExtendedWith = partialDdo
+    extendedCtor.wasExtendedWith = partialDdo;
 
     return extendedCtor
 
-  }
+  };
 
 
   /* Returns a function that calls `baseFct` and then `extensionFct` in sequence. */
@@ -160,7 +160,7 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
       extensionFct.apply(null, arguments)
     }
 
-  }
+  };
 
 
   /*
@@ -178,15 +178,15 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
     }
 
     return _.map(serviceNameSublist, function(serviceName) {
-      var indexInServiceList = _.indexOf(serviceNameList, serviceName)
+      var indexInServiceList = _.indexOf(serviceNameList, serviceName);
       if (indexInServiceList < 0) {
         throw new Error(serviceName + " was not found in the list of service names.")
       }
       return serviceList[indexInServiceList]
     })
-  }
+  };
 
 
   return modularDirectiveCtor
 
-})
+});
