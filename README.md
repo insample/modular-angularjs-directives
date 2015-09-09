@@ -37,7 +37,9 @@ This extensibility makes it possible to create "directive hierarchies". Once a m
 
 ## Can I see a demo?
 
-See the demo `demo/demo.html`. The file `demo/js/services.js` defines a simple modular directive hierarchy. The file `demo/test/abstract-demo-widget-spec.coffee` demonstrates how to test a modular directive (using Jasmine + Coffeescript). Both are extensively commented.
+First, run `npm install` and `bower install` inside the project root directory.
+
+The demo is at `demo/demo.html`. The file `demo/js/services.js` defines a simple modular directive hierarchy. The file `demo/test/abstract-demo-widget-spec.coffee` demonstrates how to test a modular directive (using Jasmine + Coffeescript). Both are extensively commented.
 
 
 ## How do I install and use it?
@@ -50,9 +52,11 @@ bower install modular-directives
 Then use in your Angular app by including the module `insample.modular_directives`.
 
 
-## How do I run the tests?
+## How do I develop?
 
-First, run `npm install` inside the project root directory, then run the tests with
+First, run `npm install` and `bower install` inside the project root directory.
+
+Run the tests with
 ```
 ./node_modules/karma/bin/karma start
 ```
