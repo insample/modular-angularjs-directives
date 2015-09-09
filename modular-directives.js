@@ -112,12 +112,18 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
             var valueAnnotations = inj.annotate(value);
             var allAnnotations = _.union(baseValueAnnotations, valueAnnotations);
 
+            // Pull out functions in case of array notation
+            var baseValueFunction =
+              _.isArray(baseValue) ? baseValue[baseValue.length - 1] : baseValue
+            var valueFunction =
+              _.isArray(value) ? value[value.length - 1] : value
+
             var concatenatedController = concatenateFunctions(
               function() {
-                baseValue.apply(null,
+                baseValueFunction.apply(null,
                   extractServices(baseValueAnnotations, allAnnotations, arguments))
               }, function() {
-                value.apply(null,
+                valueFunction.apply(null,
                   extractServices(valueAnnotations, allAnnotations, arguments))
               }
             );

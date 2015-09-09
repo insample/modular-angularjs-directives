@@ -168,6 +168,67 @@ describe "The modular directive constructor", ->
         expect(controllerCalls[1].arguments.length).toEqual 1
 
 
+    describe "when passed a partial DDO with a controller function in array notation", ->
+
+      fakeScope = service1 = service2 = null
+      twiceExtendedModularDdo = null
+
+      beforeEach ->
+
+        partialDdo =
+          scope:     key1: 1
+          compile:   () -> (str) -> linkCalls.push "base: " + str
+          controller: ['serviceName1', (serviceName1) ->
+            controllerCalls.push {
+              arguments: arguments,
+              whichController: "base"
+            }]
+          template:  "firstTemplate"
+
+        extendedModularDirectiveCtor = ModularDirectiveCtor.extendWith partialDdo
+
+        fakeScope = {name: "$scope"}
+        service1 = {name: "serviceName1"}
+        service2 = {name: "serviceName2"}
+
+        secondPartialDdo =
+          controller: ['serviceName2', (serviceName2) ->
+            controllerCalls.push {
+              arguments: arguments,
+              whichController: "extension"
+            }]
+
+        twiceExtendedCtor = extendedModularDirectiveCtor.extendWith secondPartialDdo
+        twiceExtendedModularDdo = new twiceExtendedCtor
+
+      it "concatenates the controllers, with the base controller called first", ->
+
+        twiceExtendedModularDdo.controller fakeScope, service1, service2
+
+        expect(controllerCalls[0].whichController).toEqual "base"
+        expect(controllerCalls[1].whichController).toEqual "extension"
+
+
+      it "annotates concatenated controllers with all dependencies", ->
+
+        twiceExtendedCtor = extendedModularDirectiveCtor.extendWith secondPartialDdo
+        twiceExtendedModularDdo = new twiceExtendedCtor
+
+        expect(twiceExtendedModularDdo.controller.$inject).toContain "serviceName1"
+        expect(twiceExtendedModularDdo.controller.$inject).toContain "serviceName2"
+
+
+      it "calls constituent controllers only with the dependencies they asked for", ->
+
+        twiceExtendedModularDdo.controller fakeScope, service1, service2
+
+        expect(controllerCalls[0].arguments[0]).toEqual service1
+        expect(controllerCalls[0].arguments.length).toEqual 1
+
+        expect(controllerCalls[1].arguments[0]).toEqual service2
+        expect(controllerCalls[1].arguments.length).toEqual 1
+
+
     describe "when passed a partial DDO with some other DDO field", ->
 
       beforeEach ->
