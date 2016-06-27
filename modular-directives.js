@@ -22,7 +22,7 @@ angular.module("insample.modular_directives", []).factory("ModularDirectiveCtor"
   modularDirectiveCtor.prototype = {
     // Modular directives ONLY support isolate scope.
     scope: {},
-    controller: function($scope) {},
+    controller: ['$scope', function($scope) {}],
     // Modular directives do NOT support link functions attached to a `link` key; instead, use
     // compile functions to return link functions. Pre-link functions are currently also NOT
     // supported.
