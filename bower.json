@@ -1,6 +1,6 @@
 {
   "name": "modular-directives",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "authors": [
     "Igor Ferst <igor.ferst@gmail.com>"
   ],
@@ -17,8 +17,8 @@
     "node_modules"
   ],
   "dependencies": {
-    "angular-mocks": "~1.2.21",
-    "underscore": "~1.6.0",
-    "angular": "~1.2.21"
+    "angular-mocks": "~1.3.20",
+    "underscore": "~1.8.3",
+    "angular": "~1.3.20"
   }
 }
